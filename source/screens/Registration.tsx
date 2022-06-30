@@ -25,7 +25,7 @@ function fireBaseRegistration(email:string, password:string){
 }
 
 
-// COMPOSANT REGISTRATION
+// COMPOSANT ECRAN REGISTRATION
 export default function Registration({navigation, route}:NativeStackScreenProps<StackRouteParams, 'Registration'>){
 
   const [emailState, setEmail] = useState<string>('')

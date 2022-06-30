@@ -21,7 +21,7 @@ export default function Home({navigation, route}:NativeStackScreenProps<StackRou
           </View>
           <View style={styles.loginButton}>
             <Button title={'Connexion'} 
-                    onPress={() => navigation.navigate('Registration')}
+                    onPress={() => navigation.navigate('Login')}
                     accessibilityLabel="Connexion"
                     />
           </View>
