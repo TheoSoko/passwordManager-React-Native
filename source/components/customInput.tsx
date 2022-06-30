@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/Entypo'
 type customInputProps = {
     type?: string
     onChangeText: (text:any) => void
-    onBlur: () => void
+    onBlur?: () => void
     value?: string
     placeholder?: string
     width?: number
@@ -19,9 +19,9 @@ export default function CustomInput(props:customInputProps){
         <View style={styles.inputView}>
             <TextInput 
                     onChangeText={(text) => props.onChangeText(text)} 
-                    onBlur={() => props.onBlur()} 
+                    onBlur={() => props.onBlur ? props.onBlur() : null} 
                     style={styles.input} 
-                    value={props.value} 
+                    value={props.value}
                     placeholder={props.placeholder}
                     secureTextEntry = {!showPassword}
                     keyboardType = {(props.type == 'numeric') ? 'numeric' : 
