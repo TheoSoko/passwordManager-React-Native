@@ -10,9 +10,13 @@ const BottomTab = createBottomTabNavigator();
 export default function BottomTabNavigator() {
   return (
     <NavigationContainer>
-        <BottomTab.Navigator initialRouteName='Home' screenOptions={{headerShown: false}}>
+        <BottomTab.Navigator initialRouteName='Home' 
+                             screenOptions={{headerShown: false, 
+                                            tabBarLabelStyle:{paddingBottom: 2.8, fontSize: 10}, 
+                                            tabBarIconStyle: {marginTop: 2.8}
+                                            }}>
             <BottomTab.Screen name="StackNavigator" component={StackNavigator} options={{ 
-                tabBarLabel: 'Home', tabBarIcon: ({ color, size }) => <Icon name="home" color={color} size={size} />
+                tabBarLabel: 'Home', tabBarIcon: ({ color, size }) => <Icon name="home" color={color} size={27.5} />
                 }}/>
         </BottomTab.Navigator>
     </NavigationContainer>
