@@ -10,14 +10,20 @@ export default function Home({navigation, route}:NativeStackScreenProps<StackRou
 
   return (
     <View style={styles.container}>
-        <Icon name="home" size={50} style={styles.icon}/>
+        <Icon name="home" size={55} style={styles.icon}/>
         <Text style={styles.mainTitle}>YouShallPass</Text>
         <View style={styles.buttonView}>
           <View style={styles.registerButton}>
-            <Button title={'S\'inscire'} onPress={() => navigation.navigate('Registration')}/>
+            <Button title={'S\'inscire'} 
+                    onPress={() => navigation.navigate('Registration')} 
+                    accessibilityLabel="Inscription"
+                    />
           </View>
           <View style={styles.loginButton}>
-            <Button title={'Connexion'} onPress={() => navigation.navigate('Registration')}/>
+            <Button title={'Connexion'} 
+                    onPress={() => navigation.navigate('Registration')}
+                    accessibilityLabel="Connexion"
+                    />
           </View>
 
         </View>
@@ -35,9 +41,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   mainTitle: {
-    fontSize: 24,
+    fontSize: 27,
     fontWeight: '600',
-    marginTop: 8,
+    marginTop: 9,
   },
   icon: {
     marginTop: 35,

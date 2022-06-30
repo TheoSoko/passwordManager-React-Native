@@ -67,7 +67,7 @@ export default function Registration({navigation, route}:NativeStackScreenProps<
         <TouchableOpacity style={styles.goBackView} onPress={() => navigation.goBack()}>
           <Icon name='caretleft' size={23}/>
         </TouchableOpacity>
-        <Icon name="adduser" size={45} style={styles.icon}/>
+        <Icon name="adduser" size={48} style={styles.icon}/>
         <Text style={styles.mainTitle}>Inscription</Text>
 
         { /* Formulaire */ } 
@@ -77,14 +77,15 @@ export default function Registration({navigation, route}:NativeStackScreenProps<
               onChangeText={(text) => setEmail(text)} 
               onBlur={() => emailState.length > 0 ? checkField('email') : null} 
               placeholder='Email' 
-              value={emailState}
               type= 'email'
+              value={emailState}
               />
           {emailError ? <View><Text style={styles.error}>{emailError}</Text></View> : null}
           <CustomInput 
               onChangeText={(text) => setPassword(text)} 
               onBlur={() => passwordState.length > 0 ? checkField('password') : null} 
               placeholder='Mot de passe'
+              type= 'password'
               value={passwordState}
               />
           {passWordError ? <View style={styles.errorView}><Text style={styles.error}>{passWordError}</Text></View> : null}
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   mainTitle: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: '600',
     marginTop: 8,
   },
@@ -124,7 +125,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   formView: {
-    marginTop: 19,
+    marginTop: 27,
   },
   button: {
     paddingHorizontal: 10,
