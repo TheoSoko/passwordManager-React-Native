@@ -61,7 +61,7 @@ export default function Registration({navigation, route}:NativeStackScreenProps<
       }
     }
 
-
+// AFFICHAGE
   return (
     <SafeAreaView style={styles.container}>
         <TouchableOpacity style={styles.goBackView} onPress={() => navigation.goBack()}>

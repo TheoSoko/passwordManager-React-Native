@@ -21,7 +21,7 @@ export default function CustomInput(props:customInputProps){
                     onChangeText={(text) => props.onChangeText(text)} 
                     onBlur={() => props.onBlur ? props.onBlur() : null} 
                     style={styles.input} 
-                    value={props.value}
+                    value={props.value} 
                     placeholder={props.placeholder}
                     secureTextEntry = {!showPassword}
                     keyboardType = {(props.type == 'numeric') ? 'numeric' : 
