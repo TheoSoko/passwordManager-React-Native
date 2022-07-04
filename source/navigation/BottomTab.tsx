@@ -12,10 +12,12 @@ export default function BottomTabNavigator() {
   return (
     <NavigationContainer>
         <BottomTab.Navigator initialRouteName='Home' 
-                             screenOptions={{headerShown: false, 
+                             screenOptions={ ({route}) => ({
+                                            headerShown: false, 
                                             tabBarLabelStyle:{paddingBottom: 2.8, fontSize: 10.5}, 
-                                            tabBarIconStyle: {marginTop: 2.8}
-                                            }}>
+                                            tabBarIconStyle: {marginTop: 2.8},
+                                            tabBarActiveTintColor: '#FB8500'
+                                          })}>
             <BottomTab.Screen name="StackNavigator" 
                               component={StackNavigator} 
                               options={{ tabBarLabel: 'Accueil', 
