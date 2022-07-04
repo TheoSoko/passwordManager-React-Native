@@ -18,14 +18,11 @@ export default function Home({navigation, route}:NativeStackScreenProps<StackRou
   const [isUserSigned, setIsUserSigned] = useState<boolean>()
   const [userHasSignedOut, setUserHasSignedOut] = useState<boolean>(false)
 
-
-
   function signOut(){
     auth().signOut()
     setUserHasSignedOut(true)
     setIsUserSigned(false)
   }
-
 
   return (
     <View style={styles.container}>
@@ -72,7 +69,7 @@ export default function Home({navigation, route}:NativeStackScreenProps<StackRou
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'lightgrey',
+    backgroundColor: '#FB8500',
     flex: 1,
     alignItems: 'center',
   },
@@ -96,15 +93,15 @@ const styles = StyleSheet.create({
   },
   signOut: {
     marginTop: 30,
-    backgroundColor: 'mediumturquoise',
+    backgroundColor: 'white',
     paddingHorizontal: 10,
     paddingVertical: 8,
     borderRadius: 3,
   },
   signOutText: {
-    fontSize: 15,
-    color: 'white',
-    fontWeight: '500'
+    fontSize: 18,
+    color: 'black',
+    fontWeight: '500',
   },
   signedOutMessage: {
     marginTop: 30,

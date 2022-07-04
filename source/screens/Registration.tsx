@@ -5,13 +5,15 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {StackRouteParams} from '../types'
 import validator from 'validator';
 import auth from '@react-native-firebase/auth';
-import CustomInput from '../components/customInput'
+import firestore from '@react-native-firebase/firestore';
+import CustomInput from '../components/CustomInput'
 
 function fireBaseRegistration(email:string, password:string){
   auth()
   .createUserWithEmailAndPassword(email, password)
   .then(() => {
     console.warn('Utilisateur enregistré, vous êtes connecté!');
+    firestore().collection('Users').doc(auth().currentUser?.uid).set({Email: auth().currentUser?.email})
   })
   .catch(error => {
     if (error.code === 'auth/email-already-in-use') {

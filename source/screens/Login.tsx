@@ -5,7 +5,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {StackRouteParams} from '../types'
 import validator from 'validator';
 import auth from '@react-native-firebase/auth';
-import CustomInput from '../components/customInput'
+import CustomInput from '../components/CustomInput'
 
 
 
