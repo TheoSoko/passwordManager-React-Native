@@ -13,14 +13,13 @@ type dataType = {
 
 export default function  InfoItem(props:{doc:dataType, key?:number}) {
   const [showPassword, setShowPassWord ] = useState<boolean>(false)
-  let hiddenPassword = '*'.repeat(props.doc.Password.length)
+  let hiddenPassword = '*'.repeat(10)
 
     return(
         <View style={styles.infoView}>
           <Text style={styles.infoText}>{props.doc.Login}</Text>
-          <Text style={styles.infoText}>{showPassword ? props.doc.Password : hiddenPassword}</Text>
-          <Text style={styles.infoText}>{props.doc.Name}</Text>
-          <Text style={styles.infoText}>{props.doc.Type}</Text>
+          <Text style={styles.infoTextMiddle}>{showPassword ? props.doc.Password : hiddenPassword}</Text>
+          <Text style={styles.infoTextShort}>{props.doc.Name}</Text>
           <EntypoIcon name={showPassword ? 'eye' : 'eye-with-line'}
                                                 size={20}
                                                 style={styles.icon}
@@ -35,16 +34,34 @@ const styles = StyleSheet.create({
         marginTop: 10,
         flexDirection: 'row',
         backgroundColor: 'white',
-        width: '100%',
         paddingVertical: 9,
         paddingHorizontal: 12,
         borderRadius: 6
       },
       infoText: {
         fontSize: 16,
-        marginHorizontal: 10,
+        marginHorizontal: 6,
         fontWeight: '500',
         color: 'black',
+        textAlign: 'left',
+        width: 105,
+      },
+      infoTextMiddle: {
+        fontSize: 16,
+        marginHorizontal: 6,
+        fontWeight: '500',
+        color: 'black',
+        textAlign: 'center',
+        width: 105,
+      },
+      infoTextShort: {
+        fontSize: 16,
+        marginLeft: 4,
+        marginRight: 7,
+        fontWeight: '500',
+        color: 'black',
+        textAlign: 'right',
+        width: 92,
       },
       icon: {
         paddingLeft: 7,

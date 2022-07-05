@@ -23,7 +23,7 @@ export default function CustomInput(props:customInputProps){
                     style={styles.input} 
                     value={props.value} 
                     placeholder={props.placeholder}
-                    secureTextEntry = {!showPassword}
+                    secureTextEntry = {props.type == 'password' ? !showPassword : false}
                     keyboardType = {(props.type == 'numeric') ? 'numeric' : 
                                     (props.type == 'date') ? 'numbers-and-punctuation' : 
                                     (props.type =='email' ? 'email-address' : 'default')}

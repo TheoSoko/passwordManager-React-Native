@@ -5,7 +5,7 @@ import IonIcon from 'react-native-vector-icons/Ionicons'
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import {StackRouteParams} from '../types'
+import {PasswordMenuStackRouteParams} from '../types'
 import InfoItem from '../components/infoItem'
 import auth from '@react-native-firebase/auth'
 import firestore from '@react-native-firebase/firestore'
@@ -18,7 +18,7 @@ type dataType = {
   Type: string
 }
 
-export default function MyPasswords({route, navigation}:NativeStackScreenProps<StackRouteParams>){
+export default function MyPasswords({route, navigation}:NativeStackScreenProps<PasswordMenuStackRouteParams, 'MyPasswords'>){
 
     //Firebase Auth 
     const [user, setUser] = useState<any>();
@@ -72,18 +72,24 @@ export default function MyPasswords({route, navigation}:NativeStackScreenProps<S
 
   return (
     <SafeAreaView style={styles.container}>
-        <IonIcon name="key" size={55} style={styles.keyIcon}/>
-        <Text style={styles.hello}>{user ? 'Bonjour ' + user.email : 'Je sais pas t\'es qui.'}</Text>
+        <IonIcon name="key" size={55} color={'black'} style={styles.keyIcon}/>
+        <Text style={styles.hello}>{user ? 'Bonjour ' + user.email : 'Vous n\'êtes pas connecté..'}</Text>
         {
           //Si un utilisateur est connecté
           user && 
             <View>
                 <View style={styles.infoTitleRow}>
-                  <TouchableOpacity onPress={()=>navigation.navigate('AddPassword')}>
-                    <MaterialIcon name="delete" size={32} color='black' style={styles.addIcon}/>
-                  </TouchableOpacity> 
-                  <Text style={styles.infoTitle}> Infos de comptes </Text>
-                  <TouchableOpacity><IonIcon name="add-circle" size={32} color='black' style={styles.addIcon}/></TouchableOpacity> 
+
+                    <TouchableOpacity>
+                      <MaterialIcon name="delete" size={32} color='black' style={styles.addIcon}/>
+                    </TouchableOpacity> 
+
+                    <Text style={styles.infoTitle}> Comptes </Text>
+
+                    <TouchableOpacity onPress={() => navigation.navigate('AddPassword')}>
+                      <IonIcon name="add-circle" size={32} color='black' style={styles.addIcon}/>
+                    </TouchableOpacity> 
+
                 </View>
                 <View style={styles.infoContainer}>
                     {infoDisplay()}
@@ -114,7 +120,7 @@ const styles = StyleSheet.create({
   hello: {
     marginTop: 22,
     alignSelf: 'center',
-    fontSize: 26,
+    fontSize: 23,
     fontWeight: '500',
     color: 'black'
   },
@@ -129,7 +135,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '500',
     color: 'black',
-    marginHorizontal: 5,
+    marginHorizontal: 35,
   },
   addIcon: {
     marginTop: 0.5,
