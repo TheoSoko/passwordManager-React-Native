@@ -11,15 +11,15 @@ type dataType = {
   }
 
 
-export default function  InfoItem(props:{doc:dataType}) {
+export default function  InfoItem(props:{doc:dataType, key?:number}) {
   const [showPassword, setShowPassWord ] = useState<boolean>(false)
   let hiddenPassword = '*'.repeat(props.doc.Password.length)
 
     return(
         <View style={styles.infoView}>
           <Text style={styles.infoText}>{props.doc.Login}</Text>
-          <Text style={styles.infoText}>{props.doc.Name}</Text>
           <Text style={styles.infoText}>{showPassword ? props.doc.Password : hiddenPassword}</Text>
+          <Text style={styles.infoText}>{props.doc.Name}</Text>
           <Text style={styles.infoText}>{props.doc.Type}</Text>
           <EntypoIcon name={showPassword ? 'eye' : 'eye-with-line'}
                                                 size={20}

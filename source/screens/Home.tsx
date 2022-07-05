@@ -8,22 +8,32 @@ import auth from '@react-native-firebase/auth';
 
 
 export default function Home({navigation, route}:NativeStackScreenProps<StackRouteParams, 'Home'>){
-  let user = auth().currentUser
-
-  useEffect(() => {
-    setIsUserSigned(user ? true : false)
-    setUserHasSignedOut(false)
-  }, [useIsFocused()])
-
-  const [isUserSigned, setIsUserSigned] = useState<boolean>()
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState<any>();
   const [userHasSignedOut, setUserHasSignedOut] = useState<boolean>(false)
+
+  
+    useEffect(() => {
+      const subscriber = auth().onAuthStateChanged((user) => {
+        setUser(user);
+        initializing && setInitializing(false)
+        user && setUserHasSignedOut(false)
+      })
+      return subscriber
+    }, [])
+
+
 
   function signOut(){
     auth().signOut()
     setUserHasSignedOut(true)
-    setIsUserSigned(false)
   }
 
+  // N'affiche rien avant d'avoir récupéré l'utilisateur
+  if (initializing){
+    return null
+  }
+  
   return (
     <View style={styles.container}>
         <Icon name="home" size={55} style={styles.icon}/>
@@ -31,7 +41,7 @@ export default function Home({navigation, route}:NativeStackScreenProps<StackRou
         
         {
           /* Si l'utilisateur n'est pas connecté */
-          !isUserSigned ?
+          !user ?
             <View style={styles.buttonView}>
               <View style={styles.registerButton}>
                   <Button title={'S\'inscire'} 
@@ -46,14 +56,11 @@ export default function Home({navigation, route}:NativeStackScreenProps<StackRou
                           />
               </View>
           </View>
-        : null
-        }
-
-        {
+        :
           /* Si l'utilisateur est connecté */
-          isUserSigned &&  <TouchableOpacity style={styles.signOut} onPress={() => signOut()}>
-                             <Text style={styles.signOutText}>Déconnexion</Text>
-                           </TouchableOpacity>
+          <TouchableOpacity style={styles.signOut} onPress={() => signOut()}>
+              <Text style={styles.signOutText}>Déconnexion</Text>
+          </TouchableOpacity>
         }
         {
           /* Si l'utilisateur vient de se déconnecter */
