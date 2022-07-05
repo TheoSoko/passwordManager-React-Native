@@ -1,15 +1,52 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, FlatList} from 'react-native'
+import Icon from 'react-native-vector-icons/AntDesign'
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import {PasswordMenuStackRouteParams} from '../types'
+import CustomInput from '../components/CustomInput'
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth'
 
+export default function AddPassword({route, navigation}:NativeStackScreenProps<PasswordMenuStackRouteParams, 'AddPassword'>){
+    const [Login, setLogin] = useState<string>()
+    const [Password, setPassword] = useState<string>()
+    const [Name, setName] = useState<string>()
+    const [Type, setType] = useState<string>()
 
-
-export default function AddPassword(){
+    function registerData(){
+        if (Login && Password && Name){
+            firestore().collection('Users').doc(auth().currentUser?.uid).collection('Accounts').add({
+                Login: Login,
+                Password: Password,
+                Name: Name,
+                Type: Type ? Type : ''
+            })
+            .then((response) => response && navigation.goBack())
+        }
+    }
 
     return(
         <SafeAreaView style={styles.container}>
-            <Text style={styles.mainTitle}>Ajouter un mot de passe</Text>
+            <TouchableOpacity style={styles.goBackView} onPress={() => navigation.goBack()}>
+                <Icon name='caretleft' size={23}/>
+            </TouchableOpacity>
+            <ScrollView>
+                <Text style={styles.mainTitle}>Ajout de mot de passe</Text>
             
+                <View style={styles.formView}>
+                    <CustomInput placeholder='Login' onChangeText={(text) => setLogin(text)}/>
+                    <CustomInput placeholder='Mot de passe' onChangeText={(text) => setPassword(text)} type='password'/>
+                    <CustomInput placeholder='Nom du service' onChangeText={(text) => setName(text)} />
+                    <CustomInput placeholder='Type de service (optionnel)' onChangeText={(text) => setType} />
+                </View>
+
+                <TouchableOpacity style={styles.button} onPress={() => registerData()}>
+                    <Text style={styles.buttonText}>Enregistrer</Text>
+                </TouchableOpacity>
+                
+            </ScrollView>
         </SafeAreaView>
+        
     )
 }
 
@@ -22,16 +59,15 @@ const styles = StyleSheet.create({
       flex: 1,
       alignItems: 'center',
     },
+    goBackView: {
+      alignSelf: 'flex-start',
+      marginTop: 26,
+      marginLeft: 26,
+    },
     mainTitle: {
       fontSize: 27,
       fontWeight: '600',
-      marginTop: 9,
-    },
-    hello: {
-      marginTop: 22,
-      alignSelf: 'center',
-      fontSize: 26,
-      fontWeight: '500',
+      marginTop: 40,
       color: 'black'
     },
     infoTitleRow: {
@@ -50,5 +86,23 @@ const styles = StyleSheet.create({
     infoContainer: {
       marginTop: 13,
     },
-  
+    formView: {
+        marginTop: 39, 
+        alignSelf: 'center'
+    },
+    button:{
+      marginTop: 26,
+      backgroundColor: 'white',
+      paddingHorizontal: 19,
+      paddingVertical: 8,
+      borderRadius: 6,
+      width: 135,
+      alignSelf: 'center',
+    },
+    buttonText: {
+      fontSize: 17.5,
+      fontWeight: '500',
+      color: '#FB8500',
+      textAlign: 'center'
+    },
   })

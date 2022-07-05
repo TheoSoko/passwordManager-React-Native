@@ -3,16 +3,16 @@ import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Butt
 import { useIsFocused } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import {StackRouteParams} from '../types'
+import {UserStackRouteParams} from '../types'
 import auth from '@react-native-firebase/auth';
 
 
-export default function Home({navigation, route}:NativeStackScreenProps<StackRouteParams, 'Home'>){
+export default function Home({navigation, route}:NativeStackScreenProps<UserStackRouteParams, 'Home'>){
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState<any>();
   const [userHasSignedOut, setUserHasSignedOut] = useState<boolean>(false)
 
-  
+
     useEffect(() => {
       const subscriber = auth().onAuthStateChanged((user) => {
         setUser(user);
@@ -36,7 +36,7 @@ export default function Home({navigation, route}:NativeStackScreenProps<StackRou
   
   return (
     <View style={styles.container}>
-        <Icon name="home" size={55} style={styles.icon}/>
+        <Icon name="home" size={55} color={'black'} style={styles.icon}/>
         <Text style={styles.mainTitle}>YouShallPass</Text>
         
         {
@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
     fontSize: 27,
     fontWeight: '600',
     marginTop: 9,
+    color: 'black'
   },
   icon: {
     marginTop: 35,
