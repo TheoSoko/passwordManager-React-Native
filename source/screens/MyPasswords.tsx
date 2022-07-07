@@ -10,7 +10,7 @@ import InfoItem from '../components/infoItem'
 import auth from '@react-native-firebase/auth'
 import firestore from '@react-native-firebase/firestore'
 
-
+  
 type dataType = {
   Login: string
   Name: string
@@ -25,7 +25,7 @@ export default function MyPasswords({route, navigation}:NativeStackScreenProps<P
     const [initializing, setInitializing] = useState(true);
 
     //FireStore
-    const [firestoreCollection, setFirestoreCollection] = useState<Array<dataType>>();
+    const [firestoreCollection, setFirestoreCollection] = useState<Array<dataType>>()
 
     //Vérifie si un utilisateur est connecté (au changement de focus)
     useEffect(() => {
@@ -38,9 +38,8 @@ export default function MyPasswords({route, navigation}:NativeStackScreenProps<P
 
       //Récupère la collection de l'utilisateur et change l'état
       if (user){
-        let dataArray:any = []
-        firestore().collection('Users').doc(auth().currentUser?.uid).collection('Accounts').get()
-        .then(querySnapshot => {
+        firestore().collection('Users').doc(auth().currentUser?.uid).collection('Accounts').get().then(querySnapshot => {
+          let dataArray:any = []
             querySnapshot.forEach(documentSnapshot => {
                 if (documentSnapshot.exists){ // <-- Important (jsp pourquoi) // (if (docSnapshot.data()) <-- Nope))
                   dataArray.push(documentSnapshot.data())
@@ -115,7 +114,7 @@ const styles = StyleSheet.create({
     marginTop: 9,
   },
   keyIcon: {
-    marginTop: 50,
+    marginTop: 41,
   },
   hello: {
     marginTop: 22,
@@ -141,7 +140,7 @@ const styles = StyleSheet.create({
     marginTop: 0.5,
   },
   infoContainer: {
-    marginTop: 13,
+    marginTop: 23,
   },
 
 })
