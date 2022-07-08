@@ -1,9 +1,10 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, FlatList} from 'react-native'
 import Icon from 'react-native-vector-icons/AntDesign'
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {PasswordMenuStackRouteParams} from '../types'
 import CustomInput from '../components/CustomInput'
+import { useFocusEffect } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth'
 
@@ -12,16 +13,25 @@ export default function AddPassword({route, navigation}:NativeStackScreenProps<P
     const [Password, setPassword] = useState<string>()
     const [Name, setName] = useState<string>()
     const [Type, setType] = useState<string>()
+    //State pour éviter plusieurs requêtes de suite
+    const [query, setQuery] = useState<boolean>(false)
+
+    useEffect(() => {
+      setQuery(false)
+    },[useFocusEffect])
+
 
     function registerData(){
-        if (Login && Password && Name){
+        
+        if (Login && Password && Name && !query){
             firestore().collection('Users').doc(auth().currentUser?.uid).collection('Accounts').add({
                 Login: Login,
                 Password: Password,
                 Name: Name,
-                Type: Type ? Type : ''
+                Type: Type ? Type : '',
+                createdAt: firestore.FieldValue.serverTimestamp(),
             })
-            .then((response) => response && navigation.goBack())
+            .then((response) => { setQuery(true); response && navigation.goBack() })
         }
     }
 
