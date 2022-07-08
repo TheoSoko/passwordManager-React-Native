@@ -16,42 +16,49 @@ type dataType = {
   Name: string
   Password: string
   Type: string
+  docId: number
+  createdAt: Date
 }
 
 export default function MyPasswords({route, navigation}:NativeStackScreenProps<PasswordMenuStackRouteParams, 'MyPasswords'>){
 
     //Firebase Auth 
-    const [user, setUser] = useState<any>();
-    const [initializing, setInitializing] = useState(true);
+    const [user, setUser] = useState<any>()
+    const [initializing, setInitializing] = useState(true)
 
     //FireStore
     const [firestoreCollection, setFirestoreCollection] = useState<Array<dataType>>()
 
+
     //Vérifie si un utilisateur est connecté (au changement de focus)
     useEffect(() => {
-      const subscriber = auth().onAuthStateChanged((user) => {
-        setUser(user);
-        initializing && setInitializing(false)
-      })
-      return subscriber
+        const subscriber = auth().onAuthStateChanged((user) => {
+          setUser(user);
+          initializing && setInitializing(false)
+        })
+
+        //Récupère la collection de l'utilisateur et change l'état
+        if (user){
+          firestore().collection('Users').doc(auth().currentUser?.uid).collection('Accounts').orderBy('createdAt').onSnapshot(querySnapshot => {
+            let dataArray:any = []
+              querySnapshot.forEach(documentSnapshot => {
+                  let docId = documentSnapshot.id
+                  if (documentSnapshot.exists){ // <-- Important (jsp pourquoi) // (if (docSnapshot.data()) <-- Nope))
+                    dataArray.push({...documentSnapshot.data(), docId})
+                  }
+              })
+              setFirestoreCollection(dataArray)
+          })
+        }
+        
+        return subscriber
     }, [])
 
-      //Récupère la collection de l'utilisateur et change l'état
-      if (user){
-        firestore().collection('Users').doc(auth().currentUser?.uid).collection('Accounts').get().then(querySnapshot => {
-          let dataArray:any = []
-            querySnapshot.forEach(documentSnapshot => {
-                if (documentSnapshot.exists){ // <-- Important (jsp pourquoi) // (if (docSnapshot.data()) <-- Nope))
-                  dataArray.push(documentSnapshot.data())
-                }
-            })
-            setFirestoreCollection(dataArray)
-        })
-      }
+
       
       //Crée une liste de composants avec les infos
       function infoDisplay():JSX.Element[]{
-        let jsxArray:Array<JSX.Element> = [] 
+        let jsxArray:Array<JSX.Element> = []
         if (firestoreCollection){
           firestoreCollection.map((document:dataType, key:number) => {
             if (document){
@@ -69,32 +76,33 @@ export default function MyPasswords({route, navigation}:NativeStackScreenProps<P
     return null
   }
 
+  //AFFICHAGE
   return (
     <SafeAreaView style={styles.container}>
-        <IonIcon name="key" size={55} color={'black'} style={styles.keyIcon}/>
         <Text style={styles.hello}>{user ? 'Bonjour ' + user.email : 'Vous n\'êtes pas connecté..'}</Text>
+
         {
           //Si un utilisateur est connecté
           user && 
-            <View>
-                <View style={styles.infoTitleRow}>
-
-                    <TouchableOpacity>
-                      <MaterialIcon name="delete" size={32} color='black' style={styles.addIcon}/>
-                    </TouchableOpacity> 
-
-                    <Text style={styles.infoTitle}> Comptes </Text>
-
-                    <TouchableOpacity onPress={() => navigation.navigate('AddPassword')}>
-                      <IonIcon name="add-circle" size={32} color='black' style={styles.addIcon}/>
-                    </TouchableOpacity> 
-
-                </View>
-                <View style={styles.infoContainer}>
-                    {infoDisplay()}
+          <View>
+            <View style={styles.infoTitleRow}>
+                <View style={styles.emptyView}></View>
+                <View style={styles.infoTitleView}><Text style={styles.infoTitle}> Comptes </Text></View>
+                <View style={styles.addIcon} >
+                  <TouchableOpacity onPress={() => navigation.navigate('AddPassword')}>
+                    <IonIcon name="add-circle" size={32} color='black'/>
+                  </TouchableOpacity> 
                 </View>
             </View>
+
+            <ScrollView contentContainerStyle={styles.contentScrollView}>
+              <View style={styles.infoContainer}>
+                  {infoDisplay()}
+              </View>
+            </ScrollView>
+          </View>
         }
+
     </SafeAreaView>
   )
 
@@ -117,27 +125,36 @@ const styles = StyleSheet.create({
     marginTop: 41,
   },
   hello: {
-    marginTop: 22,
+    marginTop: 65,
+    marginBottom: 20,
     alignSelf: 'center',
     fontSize: 23,
     fontWeight: '500',
     color: 'black'
   },
+  contentScrollView: {
+    paddingBottom: 140,
+  },
   infoTitleRow: {
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    marginTop: 38,
+    marginTop: 28,
+    justifyContent: 'space-evenly'
+  },
+  emptyView:{
+    flex: 1
   },
   infoTitle: {
-    alignSelf: 'center',
     fontSize: 20,
     fontWeight: '500',
     color: 'black',
-    marginHorizontal: 35,
+    alignSelf: 'center'
+  },
+  infoTitleView: {
+    flex: 1,
   },
   addIcon: {
-    marginTop: 0.5,
+    flex: 1,
+    alignItems: 'center'
   },
   infoContainer: {
     marginTop: 23,
