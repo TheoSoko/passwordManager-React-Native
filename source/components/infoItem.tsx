@@ -1,22 +1,15 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {View, Text, StyleSheet, ScrollView, TouchableOpacity, TouchableOpacityBase} from 'react-native'
+import {View, Text, StyleSheet, ScrollView, TouchableOpacity, TouchableOpacityBase, Animated} from 'react-native'
 import EntypoIcon from 'react-native-vector-icons/Entypo'
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import auth, { firebase } from '@react-native-firebase/auth'
-import firestore from '@react-native-firebase/firestore'
+import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore'
+import {fireStoreMainCollectionType} from '../types'
 
 
-type dataType = {
-    Login: string
-    Name: string
-    Password: string
-    Type: string
-    docId: number
-    createdAt: Date
-  }
 
 
-export default function  InfoItem(props:{doc:dataType, key?:number}) {
+export default function  InfoItem(props:{doc:FirebaseFirestoreTypes.DocumentData, key?:number}) {
   const [showPassword, setShowPassWord ] = useState<boolean>(false)
   let hiddenPassword = '*'.repeat(10)
 
@@ -27,8 +20,16 @@ export default function  InfoItem(props:{doc:dataType, key?:number}) {
     return(
         <View style={styles.infoView}>
 
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} ref={ref} onScrollEndDrag={(event)=>  event.nativeEvent.contentOffset.x > 60 ? ref.current.scrollToEnd() : ref.current.scrollTo({x:0})}>
-            <View style={styles.mainView} onLayout={(event) => /*setItemHeight(event.nativeEvent.layout.height)*/ null}>
+          <ScrollView horizontal={true} 
+                      showsHorizontalScrollIndicator={false} 
+                      ref={ref} onScrollEndDrag={(event) => 
+                          event.nativeEvent.contentOffset.x > 60 ? 
+                          ref.current.scrollToEnd(Animated) : 
+                          event.nativeEvent.contentOffset.x !== 0 ? 
+                          ref.current.scrollTo({x:0}, Animated) : null}
+                      >
+
+            <View style={styles.mainView} onLayout={(event) => setItemHeight(event.nativeEvent.layout.height) }>
               <Text style={styles.infoText}>{props.doc.Login}</Text>
               <Text style={styles.infoTextMiddle}>{showPassword ? props.doc.Password : hiddenPassword}</Text>
               <Text style={styles.infoTextShort}>{props.doc.Name}</Text>

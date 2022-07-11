@@ -31,13 +31,13 @@ export default function AddPassword({route, navigation}:NativeStackScreenProps<P
                 Type: Type ? Type : '',
                 createdAt: firestore.FieldValue.serverTimestamp(),
             })
-            .then((response) => { setQuery(true); response && navigation.goBack() })
+            .then((response) => { response && setQuery(true); navigation.goBack() })
         }
     }
 
     return(
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity style={styles.goBackView} onPress={() => navigation.goBack()}>
+            <TouchableOpacity style={styles.goBackView} onPress={() => navigation.goBack()} hitSlop={{top: 5, bottom:5, right:5, left: 5}}>
                 <Icon name='caretleft' size={23}/>
             </TouchableOpacity>
             <ScrollView>
@@ -71,8 +71,9 @@ const styles = StyleSheet.create({
     },
     goBackView: {
       alignSelf: 'flex-start',
-      marginTop: 26,
-      marginLeft: 26,
+      marginTop: 21,
+      marginLeft: 21,
+      padding: 21,
     },
     mainTitle: {
       fontSize: 27,
