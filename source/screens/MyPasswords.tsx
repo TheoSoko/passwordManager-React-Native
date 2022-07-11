@@ -52,7 +52,7 @@ export default function MyPasswords({route, navigation}:NativeStackScreenProps<P
   //AFFICHAGE
   return (
     <SafeAreaView style={styles.container}>
-        <Text style={styles.hello}>{user ? 'Bonjour ' + user.email : 'Vous n\'êtes pas connecté..'}</Text>
+        <Text style={styles.hello}>{user ? 'Bonjour, ' + user.email.substring(0, user.email.indexOf('@')) + ' !' : 'Vous n\'êtes pas connecté..'}</Text>
 
         {
           user && 
@@ -66,11 +66,13 @@ export default function MyPasswords({route, navigation}:NativeStackScreenProps<P
         }
         {
           user && 
-            <ScrollView contentContainerStyle={styles.contentScrollView} style={{flexWrap: 'wrap'}}>
-                {
-                  firestoreCollection
-                }
-            </ScrollView>
+            <View style={styles.scrollContainer}>
+              <ScrollView contentContainerStyle={styles.contentScrollView} style={{flexWrap: 'wrap'}}>
+                  {
+                    firestoreCollection
+                  }
+              </ScrollView>
+            </View>
         }
 
     </SafeAreaView>
@@ -104,7 +106,9 @@ const styles = StyleSheet.create({
   },
   contentScrollView: {
     paddingBottom: 140,
-    marginTop: 26,
+  },
+  scrollContainer: {
+    marginTop: 10,
   },
   infoTitleRow: {
     flexDirection: 'row',
