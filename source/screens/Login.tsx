@@ -2,7 +2,7 @@ import React, {useState, useEffect, ReactElement } from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, Text, View, TouchableOpacity, TextInput} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign'
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import {StackRouteParams} from '../types'
+import {UserStackRouteParams} from '../types'
 import validator from 'validator';
 import auth from '@react-native-firebase/auth';
 import CustomInput from '../components/CustomInput'
@@ -10,7 +10,7 @@ import CustomInput from '../components/CustomInput'
 
 
 // COMPOSANT ECRAN LOGIN
-export default function Login({navigation, route}:NativeStackScreenProps<StackRouteParams, 'Login'>){
+export default function Login({navigation, route}:NativeStackScreenProps<UserStackRouteParams, 'Login'>){
 
   const [emailState, setEmail] = useState<string>('')
   const [passwordState, setPassword] = useState<string>('')

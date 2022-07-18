@@ -8,6 +8,7 @@ type customInputProps = {
     onBlur?: () => void
     value?: string
     placeholder?: string
+    defaultValue?: string
     width?: number
 }
 
@@ -23,6 +24,7 @@ export default function CustomInput(props:customInputProps){
                     style={styles.input} 
                     value={props.value} 
                     placeholder={props.placeholder}
+                    defaultValue={props.defaultValue}
                     secureTextEntry = {props.type == 'password' ? !showPassword : false}
                     keyboardType = {(props.type == 'numeric') ? 'numeric' : 
                                     (props.type == 'date') ? 'numbers-and-punctuation' : 

@@ -10,54 +10,55 @@ import {fireStoreMainCollectionType} from '../types'
 
 
 
-export default function  InfoItem(props:{doc:FirebaseFirestoreTypes.DocumentData, key?:number}) {
+export default function  InfoItem(props:{doc:FirebaseFirestoreTypes.DocumentData, key?:number, onPress?:() => void}) {
   const [showPassword, setShowPassWord ] = useState<boolean>(false)
   let hiddenPassword = '*'.repeat(10)
 
   const [itemHeight, setItemHeight] = useState<number|null>()
 
-  const ref:any = useRef()
+  const _scrollRef:any = useRef()
 
     return(
         <View style={styles.infoView}>
 
-          <ScrollView horizontal={true} 
+          <ScrollView horizontal={true}
                       showsHorizontalScrollIndicator={false} 
-                      ref={ref} onScrollEndDrag={(event) => 
-                          event.nativeEvent.contentOffset.x > 60 ? 
-                          ref.current.scrollToEnd(Animated) : 
+                      ref={_scrollRef} onScrollEndDrag={(event) => 
+                          event.nativeEvent.contentOffset.x > 58 ? 
+                          _scrollRef.current.scrollToEnd(Animated) : 
                           event.nativeEvent.contentOffset.x !== 0 ? 
-                          ref.current.scrollTo({x:0}, Animated) : null}
+                          _scrollRef.current.scrollTo({x:0}, Animated) : null}
                       >
 
               {/* Vue principale*/}
               <View style={styles.mainView} onLayout={(event) => setItemHeight(event.nativeEvent.layout.height) }>
-                <Text style={styles.infoText}>{props.doc.Login}</Text>
-                <Text style={styles.infoTextMiddle}>{showPassword ? props.doc.Password : hiddenPassword}</Text>
+                <Text style={styles.infoLogin}>{props.doc.Login}</Text>
+                <Text style={styles.infoPassword}>{showPassword ? props.doc.Password : hiddenPassword}</Text>
                 <Text style={styles.infoTextShort}>{props.doc.Name}</Text>
                 <EntypoIcon name={showPassword ? 'eye' : 'eye-with-line'}
                             size={20}
-                            style={styles.icon}
+                            style={styles.EyeIcon}
                             onPress={() => setShowPassWord(!showPassword)}
                             /> 
-                <EntypoIcon name={'chevron-right'}
-                            size={20}
-                            style={{marginLeft:10}}
-                            onPress={() => console.warn('warnxarn')}
-                            /> 
+                <TouchableOpacity hitSlop={{top: 2, bottom:2, right:2, left: 2}} 
+                                  style={{justifyContent: 'center'}}
+                                  onPress={() => _scrollRef.current.scrollToEnd()}
+                                  >
+                    <EntypoIcon name={'chevron-right'} size={22} style={{marginLeft:10, alignSelf: 'center'}} /> 
+                </TouchableOpacity>
               </View>
 
               {/* Vue transparente pour slider (avec suppression puisque couche supérieure)*/}
               <View style={styles.emptyView}>
                 <TouchableOpacity style={{width:60, height: itemHeight ? itemHeight : 36 }} 
-                                  onPress={() =>  null}>
+                                  onPress={() => props.onPress ? props.onPress() : null}>
                 </TouchableOpacity>
               </View>
 
           </ScrollView>
 
           {/* Vue z-index -1 avec icône de suppression*/}
-          <View style={[styles.scrollToDelete, {height: itemHeight ? itemHeight : 39}]}>
+          <View style={[styles.scrollToEdit, {height: itemHeight ? itemHeight : 39}]}>
               <IconButton   icon="account-edit" 
                             size={28.5} 
                             color='black' 
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
     infoView: {
       flexDirection: 'row'
     },
-    scrollToDelete: {
+    scrollToEdit: {
       flexDirection: 'row',
       paddingHorizontal: 12,
       zIndex: -1, // ios
@@ -92,6 +93,10 @@ const styles = StyleSheet.create({
 
       justifyContent: 'flex-end',
       alignItems: 'center',
+
+      borderWidth: 1.2,
+      borderColor: 'black',
+
     },
     mainView: {
       flexDirection: 'row',
@@ -111,21 +116,23 @@ const styles = StyleSheet.create({
       width: 95,
       alignItems: 'center'
     },
-    infoText: {
+    infoLogin: {
       fontSize: 16,
       marginHorizontal: 4,
       fontWeight: '500',
       color: 'black',
       textAlign: 'left',
       width: 100,
+      alignSelf: 'center',
     },
-    infoTextMiddle: {
+    infoPassword: {
       fontSize: 16,
       marginHorizontal: 4,
       fontWeight: '500',
       color: 'black',
       textAlign: 'center',
       width: 100,
+      alignSelf: 'center',
     },
     infoTextShort: {
       fontSize: 16,
@@ -134,9 +141,12 @@ const styles = StyleSheet.create({
       color: 'black',
       textAlign: 'center',
       width: 87,
+      alignSelf: 'center',
     },
-    icon: {
-      paddingLeft: 7,
+    EyeIcon: {
+      paddingLeft: 3,
+      paddingRight: 1,
+      alignSelf: 'center',
     },
 
 })
