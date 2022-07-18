@@ -2,12 +2,14 @@ export type UserStackRouteParams = {
     Home: undefined
     Registration: undefined
     Login: undefined
-    AddPassword: undefined
 }
 
 export type PasswordMenuStackRouteParams = {
     MyPasswords: undefined
-    AddPassword: undefined
+    AddPassword?: {
+      edit: boolean
+      currentItemInfos: fireStoreMainCollectionType
+    }
 }
 
 export type fireStoreMainCollectionType = {
@@ -15,6 +17,6 @@ export type fireStoreMainCollectionType = {
     Name: string
     Password: string
     Type: string
-    docId?: number
-    createdAt: Date
+    docId?: string
+    createdAt: Date|string
   }

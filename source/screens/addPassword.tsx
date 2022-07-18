@@ -9,10 +9,13 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth'
 
 export default function AddPassword({route, navigation}:NativeStackScreenProps<PasswordMenuStackRouteParams, 'AddPassword'>){
-    const [Login, setLogin] = useState<string>()
-    const [Password, setPassword] = useState<string>()
-    const [Name, setName] = useState<string>()
-    const [Type, setType] = useState<string>()
+
+    let infos = route?.params?.currentItemInfos
+    //let edit = route?.params?.edit
+    const [Login, setLogin] = useState<string>(infos?.Login ? infos.Login : '')
+    const [Password, setPassword] = useState<string>(infos?.Password ? infos.Password : '')
+    const [Name, setName] = useState<string>(infos?.Name ? infos.Name : '')
+    const [Type, setType] = useState<string>(infos?.Type ? infos.Type : '')
     //State pour éviter plusieurs requêtes de suite
     const [query, setQuery] = useState<boolean>(false)
 
@@ -22,18 +25,33 @@ export default function AddPassword({route, navigation}:NativeStackScreenProps<P
 
 
     function registerData(){
-        
-        if (Login && Password && Name && !query){
-            firestore().collection('Users').doc(auth().currentUser?.uid).collection('Accounts').add({
-                Login: Login,
-                Password: Password,
-                Name: Name,
-                Type: Type ? Type : '',
-                createdAt: firestore.FieldValue.serverTimestamp(),
-            })
-            .then((response) => { response && setQuery(true); navigation.goBack() })
-        }
+      if (Login && Password && Name && !query){
+          firestore().collection('Users').doc(auth().currentUser?.uid).collection('Accounts').add({
+              Login: Login,
+              Password: Password,
+              Name: Name,
+              Type: Type ? Type : '',
+              createdAt: firestore.FieldValue.serverTimestamp(),
+          })
+          .then((response) => { response && setQuery(true); navigation.goBack() })
+      }
     }
+    function updateData(){
+      let errorList:Array<any> = []
+      if (Login && Password && Name && !query){
+          firestore().collection('Users').doc(auth().currentUser?.uid).collection('Accounts').doc(infos?.docId).set({
+              Login: Login,
+              Password: Password,
+              Name: Name,
+              Type: Type ? Type : '',
+              createdAt: firestore.FieldValue.serverTimestamp(),
+          })
+          .catch(errors => errors &&  errorList.push(errors))
+          .then(() => { errorList.length == 0 && setQuery(true); navigation.goBack() })
+      } else {
+        console.warn('erreur')
+      }
+  }
 
     return(
         <SafeAreaView style={styles.container}>
@@ -41,16 +59,16 @@ export default function AddPassword({route, navigation}:NativeStackScreenProps<P
                 <Icon name='caretleft' size={23}/>
             </TouchableOpacity>
             <ScrollView>
-                <Text style={styles.mainTitle}>Ajout de mot de passe</Text>
+                <Text style={styles.mainTitle}>{route?.params?.edit ? 'Modifier les infos' : 'Ajout de mot de passe'}</Text>
             
                 <View style={styles.formView}>
-                    <CustomInput placeholder='Login' onChangeText={(text) => setLogin(text)}/>
-                    <CustomInput placeholder='Mot de passe' onChangeText={(text) => setPassword(text)} type='password'/>
-                    <CustomInput placeholder='Nom du service' onChangeText={(text) => setName(text)} />
-                    <CustomInput placeholder='Type de service (optionnel)' onChangeText={(text) => setType} />
+                    <CustomInput defaultValue={Login} placeholder='Login' onChangeText={(text) => setLogin(text)}/>
+                    <CustomInput defaultValue={Password} placeholder='Mot de passe' onChangeText={(text) => setPassword(text)} type='password'/>
+                    <CustomInput defaultValue={Name} placeholder='Nom du service' onChangeText={(text) => setName(text)} />
+                    <CustomInput defaultValue={Type} placeholder='Type de service (optionnel)' onChangeText={(text) => setType} />
                 </View>
 
-                <TouchableOpacity style={styles.button} onPress={() => registerData()}>
+                <TouchableOpacity style={styles.button} onPress={() => route?.params?.edit ? updateData() : registerData()}>
                     <Text style={styles.buttonText}>Enregistrer</Text>
                 </TouchableOpacity>
                 
@@ -79,7 +97,8 @@ const styles = StyleSheet.create({
       fontSize: 27,
       fontWeight: '600',
       marginTop: 40,
-      color: 'black'
+      color: 'black',
+      alignSelf: 'center',
     },
     infoTitleRow: {
       flexDirection: 'row',

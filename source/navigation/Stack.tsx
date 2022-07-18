@@ -16,7 +16,6 @@ export default function UserStackNavigator() {
             <Stack.Screen name="Home" component={Home}/>
             <Stack.Screen name="Registration" component={Registration}/>
             <Stack.Screen name="Login" component={Login}/>
-            <Stack.Screen name="AddPassword" component={AddPassword}/>
         </Stack.Navigator>
   )
 }

@@ -25,18 +25,28 @@ export default function MyPasswords({route, navigation}:NativeStackScreenProps<P
     useEffect(() => {
         const subscriber = auth().onAuthStateChanged((user) => {
           setUser(user)
-          initializing && setInitializing(false)
           firestore().collection('Users').doc(auth().currentUser?.uid).collection('Accounts').orderBy('createdAt').onSnapshot(querySnapshot => {
             let collection:Array<JSX.Element|null> = []
-            querySnapshot.forEach((documentSnapshot, index) => 
+            querySnapshot.forEach((documentSnapshot, index) => {
+              let data = documentSnapshot.data()
               collection.push(
-                <InfoItem doc={{... documentSnapshot.data(), docId: documentSnapshot.id}} key={index}/>
+                <InfoItem doc={{... data, docId: documentSnapshot.id}} 
+                          key={index} 
+                          onPress={() => navigation.navigate('AddPassword', {edit: true, currentItemInfos: {
+                            Login: data.Login,
+                            Name: data.Name,
+                            Password: data.Password,
+                            Type: data.Type,
+                            createdAt: data.createdAt,
+                            docId: documentSnapshot.id
+                          }})}
+                        />
               )
-            )
+            })
             setFirestoreCollection(collection)
           })
         })
-        
+        initializing && setInitializing(false)
         return subscriber
     }, [])
 
@@ -58,10 +68,10 @@ export default function MyPasswords({route, navigation}:NativeStackScreenProps<P
           user && 
             <View style={styles.infoTitleRow}>
               <View style={styles.emptyView}></View>
-              <View style={styles.infoTitleView}><Text style={styles.infoTitle}> Comptes </Text></View>
+              <View style={styles.infoTitleView}><Text style={styles.infoTitleAccounts}> Comptes </Text></View>
               <TouchableOpacity onPress={() => navigation.navigate('AddPassword')} style={styles.addIcon}>
                 <IonIcon name="add-circle" size={32} color='black'/>
-              </TouchableOpacity> 
+              </TouchableOpacity>
             </View>
         }
         {
@@ -118,7 +128,7 @@ const styles = StyleSheet.create({
   emptyView:{
     flex: 1
   },
-  infoTitle: {
+  infoTitleAccounts: {
     fontSize: 20,
     fontWeight: '500',
     color: 'black',
@@ -130,7 +140,7 @@ const styles = StyleSheet.create({
   addIcon: {
     flex: 1,
     alignItems: 'center',
-    padding: 15,
+    paddingVertical: 15,
     marginTop: -15,
   },
   touchableIcon: {
