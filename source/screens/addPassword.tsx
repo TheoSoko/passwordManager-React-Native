@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react'
-import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, FlatList} from 'react-native'
+import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert} from 'react-native'
 import Icon from 'react-native-vector-icons/AntDesign'
+import Ionicon from 'react-native-vector-icons/Ionicons'
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {PasswordMenuStackRouteParams} from '../types'
 import CustomInput from '../components/CustomInput'
-import { useFocusEffect } from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth'
 
@@ -19,9 +20,16 @@ export default function AddPassword({route, navigation}:NativeStackScreenProps<P
     //State pour éviter plusieurs requêtes de suite
     const [query, setQuery] = useState<boolean>(false)
 
+    if (useIsFocused() == true && !auth().currentUser){
+      navigation.goBack()
+    } 
+
     useEffect(() => {
-      setQuery(false)
-    },[useFocusEffect])
+      const subscriber = () => {
+        setQuery(false)
+      }
+      return subscriber
+    },[useIsFocused()])
 
 
     function registerData(){
@@ -46,18 +54,55 @@ export default function AddPassword({route, navigation}:NativeStackScreenProps<P
               Type: Type ? Type : '',
               createdAt: firestore.FieldValue.serverTimestamp(),
           })
-          .catch(errors => errors &&  errorList.push(errors))
+          .catch(errors => errors && errorList.push(errors))
           .then(() => { errorList.length == 0 && setQuery(true); navigation.goBack() })
       } else {
         console.warn('erreur')
       }
   }
 
+//Function d'avertissement et de suppression de l'item
+  const deleteAlert = () =>
+  Alert.alert(
+    "Avertissement",
+    "Êtes-vous certain de vouloir supprimer cet item ?",
+    [
+      {
+        text: "Supprimer",
+        onPress: () => { 
+        let errorList:Array<any> = []
+        firestore().collection('Users').doc(auth().currentUser?.uid)
+          .collection('Accounts').doc(infos?.docId).delete()
+          .catch(errors => errors && errorList.push(errors))
+          .then(() => { if (errorList.length == 0){
+              setQuery(true)
+              Alert.alert('L\'item a bien été supprimé')
+              navigation.goBack()
+            }
+          })
+        },
+        style: "destructive",
+      },
+      {
+        text: "Annuler",
+        style: "cancel",
+      },
+    ],
+    {
+      cancelable: true,
+    }
+  )
+
     return(
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity style={styles.goBackView} onPress={() => navigation.goBack()} hitSlop={{top: 5, bottom:5, right:5, left: 5}}>
+          <View style={styles.topView}>
+            <TouchableOpacity style={styles.goBackOpacity} onPress={() => navigation.goBack()} hitSlop={{top: 5, bottom:5, right:5, left: 5}}>
                 <Icon name='caretleft' size={23}/>
             </TouchableOpacity>
+            <TouchableOpacity style={styles.deleteOpacity} onPress={() => deleteAlert()} hitSlop={{top:1, bottom:1, right:1, left:1}}>
+                <Ionicon name='trash-outline' color='black' size={28}/>
+            </TouchableOpacity>
+          </View>
             <ScrollView>
                 <Text style={styles.mainTitle}>{route?.params?.edit ? 'Modifier les infos' : 'Ajout de mot de passe'}</Text>
             
@@ -87,11 +132,18 @@ const styles = StyleSheet.create({
       flex: 1,
       alignItems: 'center',
     },
-    goBackView: {
-      alignSelf: 'flex-start',
+    goBackOpacity: {
       marginTop: 21,
       marginLeft: 21,
       padding: 21,
+      flex: 1
+    },
+    deleteOpacity: {
+      marginTop: 20.5,
+      marginRight: 19,
+      padding: 17,
+      flex: 1,
+      alignItems: 'flex-end'
     },
     mainTitle: {
       fontSize: 27,
@@ -135,4 +187,8 @@ const styles = StyleSheet.create({
       color: '#FB8500',
       textAlign: 'center'
     },
+    topView: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+    }
   })
