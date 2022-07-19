@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, FlatList} from 'react-native'
+import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, TouchableWithoutFeedback, Pressable, Alert} from 'react-native'
 import { useIsFocused } from '@react-navigation/native'
 import IonIcon from 'react-native-vector-icons/Ionicons'
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
-
+import Clipboard from '@react-native-clipboard/clipboard';
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import {PasswordMenuStackRouteParams} from '../types'
 import {fireStoreMainCollectionType} from '../types'
@@ -14,14 +14,20 @@ import firestore from '@react-native-firebase/firestore'
 
 export default function MyPasswords({route, navigation}:NativeStackScreenProps<PasswordMenuStackRouteParams, 'MyPasswords'>){
 
-    //Firebase Auth 
+    //Firebase Auth, Firebase, et initialisation
     const [user, setUser] = useState<any>()
+    const [firestoreCollection, setFirestoreCollection] = useState<Array<JSX.Element|null>>()
     const [initializing, setInitializing] = useState(true)
 
-    //FireStore
-    const [firestoreCollection, setFirestoreCollection] = useState<Array<JSX.Element|null>>()
+    //Booléen indiquant si une scrollview est ouverte
+    const [isThereOpenScroll, setIsThereOpenScroll] = useState<boolean>(false)
+    //Booléan indiquant si un élément autre qu'une scrollview ouverte a été cliqué (doit de remettre à false après)
+    const [pressEvent, setPressEvent] = useState<boolean>(false)
 
-    //Vérifie si un utilisateur est connecté (au changement de focus)
+
+    //Utilise un listener pour l'utilisateur
+    //Utilise un listener pour les données firestore
+    //S'execute au premier chargement, puis au changements sur isThereOpenScroll et pressEvent
     useEffect(() => {
         const subscriber = auth().onAuthStateChanged((user) => {
           setUser(user)
@@ -32,7 +38,7 @@ export default function MyPasswords({route, navigation}:NativeStackScreenProps<P
               collection.push(
                 <InfoItem doc={{... data, docId: documentSnapshot.id}} 
                           key={index} 
-                          onPress={() => navigation.navigate('AddPassword', {edit: true, currentItemInfos: {
+                          onEditPress={() => navigation.navigate('AddPassword', {edit: true, currentItemInfos: {
                             Login: data.Login,
                             Name: data.Name,
                             Password: data.Password,
@@ -40,15 +46,23 @@ export default function MyPasswords({route, navigation}:NativeStackScreenProps<P
                             createdAt: data.createdAt,
                             docId: documentSnapshot.id
                           }})}
+                          bringUpScrollStatus = {(isOpened) => {
+                            setIsThereOpenScroll(isOpened)
+                          }}
+                          isThereOpenScroll = {isThereOpenScroll}
+                          hasBeenPressed = {() => setPressEvent(true)}
+                          closeTheScroll = {pressEvent}
                         />
               )
+              //console.warn(openScroll)
             })
             setFirestoreCollection(collection)
+            setPressEvent(false)
           })
         })
         initializing && setInitializing(false)
         return subscriber
-    }, [])
+    }, [isThereOpenScroll, pressEvent])
 
 
 
@@ -61,33 +75,36 @@ export default function MyPasswords({route, navigation}:NativeStackScreenProps<P
 
   //AFFICHAGE
   return (
-    <SafeAreaView style={styles.container}>
-        <Text style={styles.hello}>{user ? 'Bonjour, ' + user.email.substring(0, user.email.indexOf('@')) + ' !' : 'Vous n\'êtes pas connecté..'}</Text>
+      <SafeAreaView style={styles.container} >
+        <Pressable onPress={() => setPressEvent(true)}>
 
-        {
-          user && 
-            <View style={styles.infoTitleRow}>
-              <View style={styles.emptyView}></View>
-              <View style={styles.infoTitleView}><Text style={styles.infoTitleAccounts}> Comptes </Text></View>
-              <TouchableOpacity onPress={() => navigation.navigate('AddPassword')} style={styles.addIcon}>
-                <IonIcon name="add-circle" size={32} color='black'/>
-              </TouchableOpacity>
-            </View>
-        }
-        {
-          user && 
-            <View style={styles.scrollContainer}>
-              <ScrollView contentContainerStyle={styles.contentScrollView} style={{flexWrap: 'wrap'}}>
-                  {
-                    firestoreCollection
-                  }
-              </ScrollView>
-            </View>
-        }
-
-    </SafeAreaView>
+            <Text style={styles.hello}>
+              {user ? 'Bonjour, ' + user.email.substring(0, user.email.indexOf('@')) + ' !' : 'Vous n\'êtes pas connecté..'}
+            </Text>
+            {
+              user && 
+                <View style={styles.infoTitleRow}>
+                  <View style={styles.emptyView}></View>
+                  <View style={styles.infoTitleView}><Text style={styles.infoTitleAccounts}> Comptes </Text></View>
+                  <TouchableOpacity onPress={() => navigation.navigate('AddPassword')} style={styles.addIcon}>
+                    <IonIcon name="add-circle" size={32} color='black'/>
+                  </TouchableOpacity>
+                </View>
+            }
+            {
+              user && 
+                <View style={styles.scrollContainer}>
+                  <ScrollView contentContainerStyle={styles.contentScrollView} style={{flexWrap: 'wrap'}}>
+                      {
+                        firestoreCollection
+                      }
+                  </ScrollView>
+                </View>
+            }
+          
+        </Pressable>
+      </SafeAreaView>
   )
-
 }
 
 
