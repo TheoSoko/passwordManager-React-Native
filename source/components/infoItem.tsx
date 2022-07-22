@@ -17,6 +17,7 @@ type InfoItemprops = {
   isThereOpenScroll:boolean
   hasBeenPressed:() => void
   closeTheScroll: boolean
+  passwordPressed:() => void
 }
 
 export default function InfoItem(props:InfoItemprops) {
@@ -70,12 +71,12 @@ export default function InfoItem(props:InfoItemprops) {
               <Pressable onPress={() => props.hasBeenPressed() }> 
                   <View style={styles.mainView} onLayout={(event) => setItemHeight(event.nativeEvent.layout.height) }>
                     <Text style={styles.infoLogin}>{props.doc.Login}</Text>
-                    <TouchableOpacity style={styles.infoPassword} onLongPress={() => {
-                                                                                Clipboard.setString(props.doc.Password)
-                                                                                Vibration.vibrate(180)
+                    <TouchableOpacity style={styles.infoPassword} onPress={() => {
+                                                                                Clipboard.setString(props.doc.Password)                                                                            
+                                                                                props.passwordPressed()
                                                                               }}
                                                                               >
-                      <Text style={styles.infoPassword} selectable>{showPassword ? props.doc.Password : hiddenPassword} </Text>
+                      <Text style={styles.infoPassword}>{showPassword ? props.doc.Password : hiddenPassword} </Text>
                     </TouchableOpacity>
                     <Text style={styles.infoTextShort}>{props.doc.Name}</Text>
                     <EntypoIcon name={showPassword ? 'eye' : 'eye-with-line'}

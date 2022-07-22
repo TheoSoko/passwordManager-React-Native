@@ -13,16 +13,18 @@ export default function BottomTabNavigator() {
     <NavigationContainer>
         <BottomTab.Navigator initialRouteName='Home' 
                              screenOptions={ ({route}) => ({
-                                            headerShown: false, 
-                                            tabBarLabelStyle:{paddingBottom: 2.8, fontSize: 10.5}, 
-                                            tabBarIconStyle: {marginTop: 2.8},
-                                            tabBarActiveTintColor: '#FB8500'
-                                          })}>
+                                             headerShown: false, 
+                                             tabBarLabelStyle:{paddingBottom: 2.8, fontSize: 10.5}, 
+                                             tabBarIconStyle: {marginTop: 2.8},
+                                             tabBarActiveTintColor: '#FB8500'
+                                            })}>
+
             <BottomTab.Screen name="UserStackNavigator" 
                               component={UserStackNavigator} 
                               options={{ tabBarLabel: 'Accueil', 
                                          tabBarIcon: ({ color, size }) => <Icon name="home" color={color} size={27.5} />
-                                      }}/>
+                                      }}
+                                      />
             <BottomTab.Screen name="PasswordMenuStackNavigator" 
                               component={PasswordMenuStackNavigator} 
                               options={{ tabBarLabel: 'Mots de passes', 

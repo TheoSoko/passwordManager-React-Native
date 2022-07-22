@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, TouchableWithoutFeedback, Pressable, Alert} from 'react-native'
+import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, TouchableWithoutFeedback, Pressable, ToastAndroid} from 'react-native'
 import { useIsFocused } from '@react-navigation/native'
 import IonIcon from 'react-native-vector-icons/Ionicons'
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -23,6 +23,9 @@ export default function MyPasswords({route, navigation}:NativeStackScreenProps<P
     const [isThereOpenScroll, setIsThereOpenScroll] = useState<boolean>(false)
     //Booléan indiquant si un élément autre qu'une scrollview ouverte a été cliqué (doit de remettre à false après)
     const [pressEvent, setPressEvent] = useState<boolean>(false)
+
+    //Visibilité de du pop-up quand le mdp est copié
+    const [modalVisible, setModalVisible] = useState<boolean>(false)
 
 
     //Utilise un listener pour l'utilisateur
@@ -52,6 +55,7 @@ export default function MyPasswords({route, navigation}:NativeStackScreenProps<P
                           isThereOpenScroll = {isThereOpenScroll}
                           hasBeenPressed = {() => setPressEvent(true)}
                           closeTheScroll = {pressEvent}
+                          passwordPressed = {() => ToastAndroid.showWithGravityAndOffset('Mot de passe copié !', ToastAndroid.SHORT, ToastAndroid.BOTTOM, 0, 155)}
                         />
               )
               //console.warn(openScroll)
@@ -101,7 +105,7 @@ export default function MyPasswords({route, navigation}:NativeStackScreenProps<P
                   </ScrollView>
                 </View>
             }
-          
+
         </Pressable>
       </SafeAreaView>
   )
@@ -124,8 +128,8 @@ const styles = StyleSheet.create({
     marginTop: 41,
   },
   hello: {
-    marginTop: 65,
-    marginBottom: 20,
+    marginTop: 69,
+    marginBottom: 23,
     alignSelf: 'center',
     fontSize: 23,
     fontWeight: '500',
