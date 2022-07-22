@@ -6,7 +6,9 @@ import {UserStackRouteParams} from '../types'
 import validator from 'validator';
 import auth from '@react-native-firebase/auth';
 import CustomInput from '../components/CustomInput'
+import { MMKVLoader } from "react-native-mmkv-storage";
 
+const MMKV = new MMKVLoader().initialize()
 
 
 // COMPOSANT ECRAN LOGIN
@@ -27,14 +29,16 @@ export default function Login({navigation, route}:NativeStackScreenProps<UserSta
      } else if (error.code === 'auth/invalid-email'){
         setloginError('L\'adresse mail que vous avez entré n`\'est pas valide')
      }
-     }).then((data) => data !== undefined && loggedIn()) 
+     }).then((success) => { success !== undefined && loggedIn(email, password) }) 
    }
 
 //Fonction appelée quand la connexion a été établie
-   function loggedIn():void{
+   async function loggedIn(email:string, password:string){
     setSuccessMessage('Vous êtes bien connecté!')
     setloginError(null)
     setShowSignInButton(false)
+    await MMKV.setStringAsync('email', email)
+    await MMKV.setStringAsync('password', password)
    }
    
 //Bouton de validation (ne s'affiche que si il n'y a pas d'erreur)
@@ -56,7 +60,7 @@ export default function Login({navigation, route}:NativeStackScreenProps<UserSta
         <TouchableOpacity style={styles.goBackView} onPress={() => navigation.goBack()}>
           <Icon name='caretleft' size={23}/>
         </TouchableOpacity>
-        <Icon name="user" size={48} style={styles.icon}/>
+        <Icon name="user" size={48} style={styles.userIcon} color='black'/>
         <Text style={styles.mainTitle}>Connexion</Text>
 
         { /* Formulaire */ }
@@ -77,7 +81,7 @@ export default function Login({navigation, route}:NativeStackScreenProps<UserSta
         {/* Erreur */ loginError && <View style={styles.messageView}><Text style={styles.error}>{loginError}</Text></View>}
         {/* Succès */ successMessage && <View style={styles.messageView}><Text style={styles.success}>{successMessage}</Text></View>}
 
-        {/* Bouton de connexion */renderButton()}
+        {/* Bouton de connexion */ renderButton()}
 
         </View>
 
@@ -89,45 +93,50 @@ export default function Login({navigation, route}:NativeStackScreenProps<UserSta
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'lightgrey',
+    backgroundColor: '#FB8500',
     flex: 1,
     alignItems: 'center',
   },
   mainTitle: {
     fontSize: 26,
     fontWeight: '600',
-    marginTop: 8,
+    marginTop: 10,
+    color: 'black'
   },
-  icon: {
-    marginTop: 9,
+  userIcon: {
+    marginTop: 16,
   },
   goBackView: {
     alignSelf: 'flex-start',
     marginTop: 22,
     marginLeft: 22,
+    padding: 5,
   }, 
   error: {
     marginTop: 8,
     fontSize: 16.5, 
-    color: 'black'
+    color: 'black',
+    fontWeight: '500'
   },
   success: {
-    marginTop: 13,
+    marginTop: 15,
     fontSize: 18, 
     fontWeight: '500',
-    color: 'black'
+    color: 'black',
+    textAlign: 'center'
   },
   messageView: {
-    width: '70%',
+    marginHorizontal: 'auto',
+    justifyContent: 'center'
   },
   formView: {
-    marginTop: 27,
+    marginTop: 28.5,
   },
   button: {
     paddingHorizontal: 10,
     paddingVertical: 6,
     backgroundColor: 'mediumturquoise',
-    marginTop: 24,
+    marginTop: 26.5,
     borderRadius: 7,
   },
   buttonText: {

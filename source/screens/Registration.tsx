@@ -106,7 +106,7 @@ export default function Registration({navigation, route}:NativeStackScreenProps<
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'lightgrey',
+    backgroundColor: '#FB8500',
     flex: 1,
     alignItems: 'center',
   },

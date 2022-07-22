@@ -4,18 +4,38 @@ import { useIsFocused } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {UserStackRouteParams} from '../types'
-import auth from '@react-native-firebase/auth';
+import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import { MMKVLoader } from "react-native-mmkv-storage";
 
+const MMKV = new MMKVLoader().initialize()
 
-export default function Home({navigation, route}:NativeStackScreenProps<UserStackRouteParams, 'Home'>){
+// Connexion automatique
+async function signInWithMMKVData(email:string, password:string):Promise<void> {
+  const signIn = (email:string, password:string) => {
+    auth().signInWithEmailAndPassword(email, password)
+  }
+
+  await (
+  MMKV.getStringAsync(email).then((gotEmail) => gotEmail && 
+  MMKV.getStringAsync(password).then((gotpassword) => gotpassword && 
+  signIn(gotEmail, gotpassword)))
+  )
+}
+
+// Composant Ecran
+export default function Home({navigation, route}:NativeStackScreenProps<UserStackRouteParams, 'Home'>) {
   const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState<any>();
+  const [user, setUser] = useState<FirebaseAuthTypes.User|null>();
   const [userHasSignedOut, setUserHasSignedOut] = useState<boolean>(false)
 
 
     useEffect(() => {
+      if (!auth().currentUser){
+        signInWithMMKVData('email', 'password')
+      }
+
       const subscriber = auth().onAuthStateChanged((user) => {
-        setUser(user);
+        setUser(user)
         initializing && setInitializing(false)
         user && setUserHasSignedOut(false)
       })
@@ -23,10 +43,12 @@ export default function Home({navigation, route}:NativeStackScreenProps<UserStac
     }, [])
 
 
-
   function signOut(){
     auth().signOut()
     setUserHasSignedOut(true)
+    const MMKV = new MMKVLoader().initialize()
+    MMKV.removeItem('email')
+    MMKV.removeItem('password')
   }
 
   // N'affiche rien avant d'avoir récupéré l'utilisateur
