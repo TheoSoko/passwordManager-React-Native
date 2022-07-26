@@ -7,7 +7,20 @@ import validator from 'validator';
 import auth from '@react-native-firebase/auth';
 import CustomInput from '../components/CustomInput'
 import { MMKVLoader } from "react-native-mmkv-storage";
+import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics'
 
+const rnBiometrics = new ReactNativeBiometrics()
+
+rnBiometrics.isSensorAvailable()
+  .then((resultObject) => {
+    if (resultObject && resultObject.available && resultObject.biometryType === BiometryTypes.Biometrics) {
+      console.warn('Biometrics is supported')
+    } else {
+      console.warn('Biometrics not supported')
+    }
+  })
+
+//Framework MMKV Storage: solution de stockage
 const MMKV = new MMKVLoader().initialize()
 
 

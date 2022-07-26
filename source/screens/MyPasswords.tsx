@@ -87,7 +87,7 @@ export default function MyPasswords({route, navigation}:NativeStackScreenProps<P
             </Text>
             {
               user && 
-                <View style={styles.infoTitleRow}>
+                <View style={styles.accountsTitleRow}>
                   <View style={styles.emptyView}></View>
                   <View style={styles.infoTitleView}><Text style={styles.infoTitleAccounts}> Comptes </Text></View>
                   <TouchableOpacity onPress={() => navigation.navigate('AddPassword')} style={styles.addIcon}>
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     marginTop: 41,
   },
   hello: {
-    marginTop: 69,
+    marginTop: 72,
     marginBottom: 23,
     alignSelf: 'center',
     fontSize: 23,
@@ -141,9 +141,9 @@ const styles = StyleSheet.create({
   scrollContainer: {
     marginTop: 10,
   },
-  infoTitleRow: {
+  accountsTitleRow: {
     flexDirection: 'row',
-    marginTop: 39,
+    marginTop: 34,
     justifyContent: 'space-evenly'
   },
   emptyView:{

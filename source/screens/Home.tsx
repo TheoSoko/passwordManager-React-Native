@@ -7,6 +7,7 @@ import {UserStackRouteParams} from '../types'
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import { MMKVLoader } from "react-native-mmkv-storage";
 
+//Framework MMKV Storage: solution de stockage
 const MMKV = new MMKVLoader().initialize()
 
 // Connexion automatique
@@ -46,7 +47,6 @@ export default function Home({navigation, route}:NativeStackScreenProps<UserStac
   function signOut(){
     auth().signOut()
     setUserHasSignedOut(true)
-    const MMKV = new MMKVLoader().initialize()
     MMKV.removeItem('email')
     MMKV.removeItem('password')
   }
